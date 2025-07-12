@@ -12,7 +12,7 @@ export async function exportToPDF(bankAccounts: BankAccount[], password: string)
   let yPosition = height - 50;
 
   // Title
-  currentPage.drawText("SecureVault - Banking Credentials Export", {
+  currentPage.drawText("dewault - Banking Credentials Export", {
     x: 50,
     y: yPosition,
     size: 18,

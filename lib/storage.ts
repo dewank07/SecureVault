@@ -1,9 +1,17 @@
-import localForage from 'localforage';
-import { EncryptedData } from './crypto';
+import localForage from "localforage";
+import { EncryptedData } from "./crypto";
 
 export interface BankCredential {
   id: string;
-  type: 'upi_pin' | 'atm_pin' | 'net_banking' | 'mobile_banking' | 'transaction_password' | 'debit_card_pin' | 'credit_card_pin' | 'other';
+  type:
+    | "upi_pin"
+    | "atm_pin"
+    | "net_banking"
+    | "mobile_banking"
+    | "transaction_password"
+    | "debit_card_pin"
+    | "credit_card_pin"
+    | "other";
   label: string; // e.g., "UPI PIN", "ATM PIN", "Net Banking Password"
   encryptedValue: EncryptedData;
   createdAt: Date;
@@ -15,7 +23,7 @@ export interface BankAccount {
   id: string;
   bankName: string;
   accountNumber: string; // Last 4 digits or masked format
-  accountType: 'savings' | 'current' | 'salary' | 'fd' | 'rd' | 'credit_card' | 'other';
+  accountType: "savings" | "current" | "salary" | "fd" | "rd" | "credit_card" | "other";
   accountHolderName: string;
   credentials: BankCredential[];
   createdAt: Date;
@@ -26,7 +34,7 @@ export interface BankAccount {
 
 export interface VaultSettings {
   salt: string;
-  theme: 'light' | 'dark';
+  theme: "light" | "dark";
   isFirstTime: boolean;
   defaultBanks: string[];
 }
@@ -47,29 +55,29 @@ export const INDIAN_BANKS = [
   "Central Bank of India",
   "Indian Overseas Bank",
   "UCO Bank",
-  "Other"
+  "Other",
 ];
 
 export const CREDENTIAL_TYPES = [
-  { value: 'upi_pin', label: 'UPI PIN', description: 'PIN for UPI transactions' },
-  { value: 'atm_pin', label: 'ATM PIN', description: 'PIN for ATM withdrawals' },
-  { value: 'net_banking', label: 'Net Banking Password', description: 'Internet banking login password' },
-  { value: 'mobile_banking', label: 'Mobile Banking PIN', description: 'Mobile app login PIN/password' },
-  { value: 'transaction_password', label: 'Transaction Password', description: 'Password for online transactions' },
-  { value: 'debit_card_pin', label: 'Debit Card PIN', description: 'PIN for debit card transactions' },
-  { value: 'credit_card_pin', label: 'Credit Card PIN', description: 'PIN for credit card transactions' },
-  { value: 'other', label: 'Other', description: 'Other banking credentials' }
+  { value: "upi_pin", label: "UPI PIN", description: "PIN for UPI transactions" },
+  { value: "atm_pin", label: "ATM PIN", description: "PIN for ATM withdrawals" },
+  { value: "net_banking", label: "Net Banking Password", description: "Internet banking login password" },
+  { value: "mobile_banking", label: "Mobile Banking PIN", description: "Mobile app login PIN/password" },
+  { value: "transaction_password", label: "Transaction Password", description: "Password for online transactions" },
+  { value: "debit_card_pin", label: "Debit Card PIN", description: "PIN for debit card transactions" },
+  { value: "credit_card_pin", label: "Credit Card PIN", description: "PIN for credit card transactions" },
+  { value: "other", label: "Other", description: "Other banking credentials" },
 ];
 
 class StorageService {
   private accountsStore = localForage.createInstance({
-    name: 'SecureVault',
-    storeName: 'bankAccounts'
+    name: "dewault",
+    storeName: "bankAccounts",
   });
 
   private settingsStore = localForage.createInstance({
-    name: 'SecureVault',
-    storeName: 'settings'
+    name: "dewault",
+    storeName: "settings",
   });
 
   // Bank Account Operations
@@ -96,8 +104,8 @@ class StorageService {
   // Credential Operations within Bank Account
   async addCredentialToAccount(accountId: string, credential: BankCredential): Promise<void> {
     const account = await this.getBankAccount(accountId);
-    if (!account) throw new Error('Bank account not found');
-    
+    if (!account) throw new Error("Bank account not found");
+
     account.credentials.push(credential);
     account.updatedAt = new Date();
     await this.saveBankAccount(account);
@@ -105,11 +113,11 @@ class StorageService {
 
   async updateCredentialInAccount(accountId: string, credential: BankCredential): Promise<void> {
     const account = await this.getBankAccount(accountId);
-    if (!account) throw new Error('Bank account not found');
-    
-    const credentialIndex = account.credentials.findIndex(c => c.id === credential.id);
-    if (credentialIndex === -1) throw new Error('Credential not found');
-    
+    if (!account) throw new Error("Bank account not found");
+
+    const credentialIndex = account.credentials.findIndex((c) => c.id === credential.id);
+    if (credentialIndex === -1) throw new Error("Credential not found");
+
     account.credentials[credentialIndex] = credential;
     account.updatedAt = new Date();
     await this.saveBankAccount(account);
@@ -117,38 +125,39 @@ class StorageService {
 
   async deleteCredentialFromAccount(accountId: string, credentialId: string): Promise<void> {
     const account = await this.getBankAccount(accountId);
-    if (!account) throw new Error('Bank account not found');
-    
-    account.credentials = account.credentials.filter(c => c.id !== credentialId);
+    if (!account) throw new Error("Bank account not found");
+
+    account.credentials = account.credentials.filter((c) => c.id !== credentialId);
     account.updatedAt = new Date();
     await this.saveBankAccount(account);
   }
 
   // Settings Operations
   async saveSettings(settings: VaultSettings): Promise<void> {
-    await this.settingsStore.setItem('settings', settings);
+    await this.settingsStore.setItem("settings", settings);
   }
 
   async getSettings(): Promise<VaultSettings | null> {
-    return await this.settingsStore.getItem('settings');
+    return await this.settingsStore.getItem("settings");
   }
 
   // Search and Filter Operations
   async searchAccounts(query: string): Promise<BankAccount[]> {
     const accounts = await this.getAllBankAccounts();
     const lowerQuery = query.toLowerCase();
-    
-    return accounts.filter(account => 
-      account.bankName.toLowerCase().includes(lowerQuery) ||
-      account.accountHolderName.toLowerCase().includes(lowerQuery) ||
-      account.accountNumber.includes(query) ||
-      account.credentials.some(cred => cred.label.toLowerCase().includes(lowerQuery))
+
+    return accounts.filter(
+      (account) =>
+        account.bankName.toLowerCase().includes(lowerQuery) ||
+        account.accountHolderName.toLowerCase().includes(lowerQuery) ||
+        account.accountNumber.includes(query) ||
+        account.credentials.some((cred) => cred.label.toLowerCase().includes(lowerQuery)),
     );
   }
 
   async getAccountsByBank(bankName: string): Promise<BankAccount[]> {
     const accounts = await this.getAllBankAccounts();
-    return accounts.filter(account => account.bankName === bankName);
+    return accounts.filter((account) => account.bankName === bankName);
   }
 
   // Statistics
@@ -163,10 +172,10 @@ class StorageService {
     const credentialTypeDistribution: Record<string, number> = {};
     let totalCredentials = 0;
 
-    accounts.forEach(account => {
+    accounts.forEach((account) => {
       bankDistribution[account.bankName] = (bankDistribution[account.bankName] || 0) + 1;
-      
-      account.credentials.forEach(credential => {
+
+      account.credentials.forEach((credential) => {
         credentialTypeDistribution[credential.type] = (credentialTypeDistribution[credential.type] || 0) + 1;
         totalCredentials++;
       });
@@ -176,7 +185,7 @@ class StorageService {
       totalAccounts: accounts.length,
       totalCredentials,
       bankDistribution,
-      credentialTypeDistribution
+      credentialTypeDistribution,
     };
   }
 

@@ -1,6 +1,6 @@
 {
-  "name": "SecureVault - Offline Password Manager",
-  "short_name": "SecureVault",
+  "name": "dewault - Offline Password Manager",
+  "short_name": "dewault",
   "description": "Secure, offline-first password vault with client-side encryption",
   "start_url": "/",
   "display": "standalone",
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     },
     {
-      "src": "/icon-512.png", 
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"

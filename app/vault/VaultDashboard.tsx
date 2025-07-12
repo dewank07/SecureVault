@@ -139,7 +139,7 @@ export function VaultDashboard({ onLock }: VaultDashboardProps) {
                 <Shield className='w-4 h-4 sm:w-6 sm:h-6 text-primary' />
               </div>
               <div className='min-w-0 flex-1'>
-                <h1 className='text-lg sm:text-xl font-bold truncate'>SecureVault Banking</h1>
+                <h1 className='text-lg sm:text-xl font-bold truncate'>dewault Banking</h1>
                 <p className='text-xs sm:text-sm text-muted-foreground'>
                   {bankAccounts.length} accounts • {totalCredentials} credentials
                 </p>
